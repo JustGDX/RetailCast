@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retail ML — Demand Forecasting & Inventory Decision Support</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="login" class="login">
+  <section class="login-hero">
+    <div>
+      <span class="eyebrow">Retail Cast</span>
+      <h1>Demand forecasting<br>with <span class="serif">transparent</span><br>inventory decisions.</h1>
+      <p>Transform historical retail demand data into measurable 7-day forecasts and explainable rule-based reorder recommendations.</p>
+    </div>
+    <div class="login-art"><div></div><div></div><div></div><div></div><div></div><div></div></div>
+  </section>
+
+  <section class="login-panel">
+    <div class="login-card">
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="tabSignIn" onclick="switchAuthTab('signin')">Sign In</button>
+        <button type="button" class="auth-tab" id="tabSignUp" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+
+      <form id="loginForm" class="auth-form" autocomplete="on">
+        <span class="login-badge">Retail ML</span>
+        <h2>Welcome back</h2>
+        <p class="muted" style="font-size:13.5px;margin:0 0 24px">Sign in to manage products, forecasts, inventory, and recommendations.</p>
+
+        <div class="field">
+          <label>Email</label>
+          <input id="loginEmail" class="input" type="email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <div style="display:flex;gap:8px">
+            <input id="loginPwd" class="input" type="password" placeholder="••••••••" autocomplete="current-password" required>
+            <button type="button" class="btn" onclick="togglePassword('loginPwd')" style="flex-shrink:0">Show</button>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0 20px">
+          <label style="font-weight:500;margin:0;font-size:13px;color:var(--muted)">
+            <input type="checkbox" checked style="margin-right:6px;accent-color:var(--primary)"> Remember me
+          </label>
+          <button type="button" class="btn ghost sm" onclick="toast('Password reset flow simulated.')" style="color:var(--primary);font-weight:600">Forgot password?</button>
+        </div>
+
+        <button type="submit" class="btn primary lg" style="width:100%" id="loginSubmitBtn">Sign In</button>
+
+        <p class="small muted" style="text-align:center;margin-top:16px">
+          No account yet?
+          <a href="#" onclick="switchAuthTab('signup');return false" style="color:var(--primary);font-weight:700;text-decoration:none">Create one</a>
+        </p>
+      </form>
+
+      <form id="registerForm" class="auth-form" autocomplete="off" style="display:none">
+        <span class="login-badge">Create account</span>
+        <h2>Get started</h2>
+        <p class="muted" style="font-size:13.5px;margin:0 0 24px">Set up your account to start managing products and forecasts.</p>
+
+        <div class="field"><label>Full Name</label><input id="regName" class="input" type="text" placeholder="Jane Doe" autocomplete="name" required></div>
+        <div class="field"><label>Email</label><input id="regEmail" class="input" type="email" placeholder="you@example.com" autocomplete="email" required></div>
+
+        <div class="field">
+          <label>Password</label>
+          <div style="display:flex;gap:8px">
+            <input id="regPwd" class="input" type="password" placeholder="At least 6 characters" autocomplete="new-password" required>
+            <button type="button" class="btn" onclick="togglePassword('regPwd')" style="flex-shrink:0">Show</button>
+          </div>
+        </div>
+
+        <div class="field"><label>Confirm Password</label><input id="regPwd2" class="input" type="password" placeholder="Re-enter password" autocomplete="new-password" required></div>
+
+        <label style="font-weight:500;margin:0 0 18px;font-size:13px;color:var(--muted);display:flex;align-items:flex-start;gap:8px">
+          <input id="regTerms" type="checkbox" required style="margin-top:3px;accent-color:var(--primary)">
+          <span>I agree to the terms of service and privacy policy.</span>
+        </label>
+
+        <button type="submit" class="btn primary lg" style="width:100%" id="regSubmitBtn">Create Account</button>
+
+        <p class="small muted" style="text-align:center;margin-top:16px">
+          Already have an account?
+          <a href="#" onclick="switchAuthTab('signin');return false" style="color:var(--primary);font-weight:700;text-decoration:none">Sign in</a>
+        </p>
+      </form>
+    </div>
+  </section>
+</div>
+
+<div id="app" class="app">
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+  <aside id="sidebar" class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">RM</div>
+      <div class="brand-text"><strong>Retail ML</strong><span>Decision Support</span></div>
+    </div>
+    <nav id="nav" class="nav"></nav>
+    <div class="sidebar-footer">
+      <button class="btn" style="width:100%;justify-content:flex-start" onclick="logout()">
+        <span class="ico-inline" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+        <span class="label">Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <main id="main" class="main">
+    <header class="header">
+      <div class="header-left">
+        <button class="icon-btn mobile-menu" onclick="toggleMobile()" aria-label="Menu">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        </button>
+        <div>
+          <div id="headerTitle" class="header-title">Dashboard</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="search-trigger" onclick="openCmd()" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <span class="text">Search or jump to…</span>
+          <span class="kbd-hint">⌘K</span>
+        </button>
+        <div class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" role="button" aria-label="Toggle theme">
+          <span class="icon sun">☀</span>
+          <span class="icon moon">☾</span>
+        </div>
+        <button class="icon-btn" onclick="toast('No new critical notifications.')" title="Notifications" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <div class="userbox">
+          <div class="avatar" id="userAvatar">RM</div>
+          <div class="who"><b class="sm" id="userName">Retail Manager</b><div class="small muted">Authorized User</div></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <section id="dashboard" class="page active">
+        <div class="page-title"><div><h1>Dashboard</h1><p class="subtitle">Monitor product demand, inventory health, and reorder recommendations.</p></div><button class="btn primary" onclick="go('forecast-history');switchCombinedTab2('forecast')">Generate Forecast</button></div>
+        <div class="grid cols-3" id="kpis"></div>
+        <div class="grid cols-2" style="margin-top:18px">
+          <div class="card"><h3>Historical Demand Trend</h3><p id="demandTrendLabel" class="small muted">No historical demand data</p><div id="demandTrendChart" class="line-chart" style="display:grid;place-items:center"><span class="muted sm">No sales records available.</span></div><div class="legend"><span><i></i>Actual Demand</span></div></div>
+          <div class="card"><h3>7-Day Forecasted Demand</h3><p class="small muted">Selected products</p><div id="forecastBars" class="chart"></div></div>
+          <div class="card"><h3>Inventory Status Distribution</h3><div id="statusDonut" class="donut" data-total="0" style="background:var(--surface-2)"></div><div id="statusLegend" class="legend" style="justify-content:center"><span class="muted">No inventory assessments yet.</span></div></div>
+          <div class="card"><h3>Current Stock vs Required Stock</h3><div id="stockBars" class="chart"></div><div class="legend"><span><i></i>Current Stock</span><span><i class="alt"></i>Required Stock</span></div></div>
+        </div>
+        <div class="card" style="margin-top:18px"><h3>Products Requiring Attention</h3><div id="attentionTable" class="table-wrap"></div></div>
+        <div class="card" style="margin-top:18px"><h3>Recent Activity</h3><div id="activity"></div></div>
+      </section>
+
+      <section id="products-inventory" class="page">
+  <div class="page-title">
+    <div><h1>Products & Inventory</h1><p class="subtitle">Manage retail products and monitor their inventory levels.</p></div>
+    <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" onclick="recomputeEligibility()" title="Recompute forecast eligibility for all products">Recompute Eligibility</button>
+      <button class="btn primary" onclick="openProductModal()">+ Add Product</button>
+    </div>
+  </div>
+
+        <div id="combinedProducts">
+          <div class="toolbar">
+            <input id="productSearch" class="input" placeholder="Search product or SKU..." oninput="pageState.products=1;renderProducts()">
+            <select id="categoryFilter" onchange="pageState.products=1;renderProducts()">
+              <option value="All Categories">All Categories</option>
+            </select>
+          </div>
+          <div id="productsTable" class="table-wrap"></div>
+        </div>
+
+        <div id="combinedInventory" style="display:none">
+          <div class="notice" style="margin-bottom:16px">Inventory quantities are digitally maintained by authorized users and are not automatically detected from physical inventory.</div>
+          <div class="tabs" style="margin-bottom:14px">
+            <button class="tab active" onclick="setInvFilter('All',this)">All</button>
+            <button class="tab" onclick="setInvFilter('Restock Recommended',this)">Restock Recommended</button>
+            <button class="tab" onclick="setInvFilter('Stock Sufficient',this)">Stock Sufficient</button>
+            <button class="tab" onclick="setInvFilter('Low Stock',this)">Low Stock</button>
+            <button class="tab" onclick="setInvFilter('No Forecast',this)">No Forecast</button>
+          </div>
+          <div id="inventoryTable" class="table-wrap"></div>
+        </div>
+      </section>
+
+      <section id="forecast-history" class="page">
+        <div class="page-title"><div><h1>Forecast & Reorder History</h1><p class="subtitle">Generate 7-day demand forecasts and review past reorder recommendations.</p></div></div>
+
+        <div class="tabs">
+          <button class="tab active" id="tabForecast" onclick="switchCombinedTab2('forecast')">Forecast</button>
+          <button class="tab" id="tabReorder" onclick="switchCombinedTab2('reorder')">Reorder History</button>
+        </div>
+
+        <div id="combinedForecast">
+          <div class="grid cols-2">
+            <div class="card">
+              <h3>Select Product</h3>
+              <div class="field">
+                <label>Product</label>
+                <div id="forecastProductContainer"></div>
+              </div>
+              <div id="forecastProductInfo"></div>
+              <button id="forecastBtn" class="btn primary" style="width:100%;margin-top:12px" onclick="generateForecast()">Generate 7-Day Forecast</button>
+            </div>
+            <div class="card"><h3>Forecasting Scope</h3><div class="notice">Machine learning predicts product demand only. It does not determine current inventory, minimum stock, or reorder status.</div><div style="margin-top:18px"><div class="kpi-label">Model</div><p class="muted" style="margin:4px 0 14px">XGBoost Regressor</p><div class="kpi-label">Forecast Horizon</div><p class="muted" style="margin:4px 0 14px">7 days</p><div class="kpi-label">Decision Method</div><p class="muted" style="margin:4px 0 0">Separate deterministic inventory rule</p></div></div>
+          </div>
+          <div id="forecastResult" style="margin-top:18px"></div>
+
+          <div id="inventoryStatusPanel" style="display:none;margin-top:20px">
+            <div class="card"><h3>Inventory Assessment</h3><div id="statusContent"></div></div>
+          </div>
+        </div>
+
+        <div id="combinedReorder" style="display:none">
+          <div id="reorderHistoryTable" class="table-wrap"></div>
+        </div>
+      </section>
+
+      <section id="product-details" class="page">
+        <div class="page-title"><div><div class="small muted" style="margin-bottom:6px">Products / <span id="detailSku" class="mono"></span></div><h1 id="detailName"></h1><p id="detailCategory" class="subtitle"></p></div><div class="actions"><button class="btn" onclick="openProductModal(selectedProduct)">Edit Product</button><button class="btn primary" onclick="go('forecast-history');switchCombinedTab2('forecast')">Generate Forecast</button></div></div>
+        <div id="detailKpis" class="grid cols-4"></div>
+        <div class="card" style="margin-top:18px">
+          <div class="tabs">
+            <button class="tab active" onclick="detailTab('overview',this)">Overview</button>
+            <button class="tab" onclick="detailTab('sales',this)">Sales History</button>
+            <button class="tab" onclick="detailTab('inventory',this)">Inventory</button>
+            <button class="tab" onclick="detailTab('movements',this)">Stock Movements</button>
+            <button class="tab" onclick="detailTab('forecasts',this)">Forecasts</button>
+            <button class="tab" onclick="detailTab('recommendations',this)">Recommendations</button>
+          </div>
+          <div id="detailTabContent"></div>
+        </div>
+      </section>
+
+      <section id="sales" class="page">
+        <div class="page-title"><div><h1>Sales Records</h1><p class="subtitle">View and manage historical retail demand data.</p></div><div class="actions"><button class="btn" onclick="go('import')">Import Data</button><button class="btn primary" onclick="openSaleModal()">+ Add Sale</button></div></div>
+        <div class="toolbar">
+          <input id="salesSearch" class="input" placeholder="Search sales..." oninput="pageState.sales=1;renderSales()">
+          <input class="input" type="date" style="max-width:170px">
+          <input class="input" type="date" style="max-width:170px">
+        </div>
+        <div id="salesTable" class="table-wrap"></div>
+      </section>
+
+      <section id="import" class="page">
+        <div class="page-title"><div><h1>Data Import</h1><p class="subtitle">Upload sales records, or repair a file that failed to import.</p></div></div>
+
+        <div class="tabs">
+          <button class="tab active" id="tabUploadCsv" onclick="switchImportTab('upload')">Upload CSV</button>
+          <button class="tab" id="tabRepairFile" onclick="switchImportTab('repair')">Repair Import File</button>
+        </div>
+
+        <div id="importUpload">
+          <div class="notice">Historical data are used for demand forecasting and model evaluation. They do not represent the store's current inventory.</div>
+          <div class="stepper"><div id="step1" class="step active"><b>1</b>Upload</div><div>→</div><div id="step2" class="step"><b>2</b>Validate</div><div>→</div><div id="step3" class="step"><b>3</b>Review</div><div>→</div><div id="step4" class="step"><b>4</b>Import</div></div>
+          <div id="importStage" class="card"></div>
+        </div>
+
+        <div id="importRepair" style="display:none">
+          <div id="repairSetupBox" class="card" style="display:none">
+            <h3>One-time Setup Required</h3>
+            <p class="muted" style="margin-top:8px">
+              The verified records database has not been loaded yet. This is a
+              one-time setup that imports the reference data used for file
+              repair. It takes about 10–30 seconds.
+            </p>
+            <button class="btn primary" onclick="runUciSetup()" id="setupBtn" style="margin-top:14px">Setup Verified Records Database</button>
+            <div id="setupProgress" style="margin-top:14px"></div>
+          </div>
+
+          <div id="repairMain" style="display:none">
+            <div class="notice">
+              <b>Repair a CSV file that failed to import.</b> Upload the file below.
+              The system will detect what's missing and merge compatible history
+              from the verified records. You'll then download a new CSV that will
+              pass import validation.
+            </div>
+
+            <div class="card" style="margin-top:16px">
+              <h3>Step 1 — Upload your failed CSV</h3>
+              <div class="dropzone" style="padding:30px 20px">
+                <div style="font-size:36px;margin-bottom:8px">⇧</div>
+                <p class="muted" style="margin:0 0 4px">Upload the file that failed to import</p>
+                <input id="repairFile" type="file" accept=".csv,text/csv"
+                       style="display:block;margin:14px auto;max-width:280px">
+                <button class="btn primary" onclick="analyzeAndRepair()">Analyze &amp; Repair</button>
+              </div>
+            </div>
+
+            <div id="repairReportBox" style="display:none;margin-top:16px"></div>
+
+            <div class="card" style="margin-top:16px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+                <div>
+                  <h3 style="margin:0">Verified records available for merging</h3>
+                  <p class="small muted" style="margin:4px 0 0" id="repairStatus">Loading…</p>
+                </div>
+                <button class="btn" onclick="loadRepairCandidates()">Refresh</button>
+              </div>
+              <div id="repairCandidates" class="table-wrap" style="margin-top:14px"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="movements" class="page">
+        <div class="page-title"><div><h1>Stock Movement History</h1><p class="subtitle">Audit stock additions, deductions, returns, and manual adjustments.</p></div><button class="btn primary" onclick="openMovementModal()">+ Record Movement</button></div>
+        <div id="movementTable" class="table-wrap"></div>
+      </section>
+
+      <section id="settings" class="page">
+        <div class="page-title"><div><h1>Settings</h1><p class="subtitle">Manage profile and application preferences.</p></div></div>
+        <div class="grid cols-2">
+          <div class="card"><h3>Profile</h3><div class="field"><label>Full Name</label><input id="settingsName" class="input"></div><div class="field"><label>Email</label><input id="settingsEmail" class="input"></div><div class="field"><label>Role</label><input class="input" value="Authorized User" disabled></div><button class="btn primary" onclick="toast('Profile settings saved.')">Save Profile</button></div>
+          <div class="card"><h3>Application Preferences</h3><div class="field"><label>Rows per table</label><select><option>10</option><option>25</option><option>50</option></select></div><div class="field"><label>Forecast Horizon</label><input class="input" value="7 days" disabled></div><div class="notice">Forecast horizon is fixed by the project design.</div></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<div id="cmdBackdrop" class="cmd-backdrop" onclick="if(event.target===this)closeCmd()">
+  <div class="cmd">
+    <input id="cmdInput" class="cmd-input" placeholder="Type a command or search…" oninput="filterCmd()" onkeydown="cmdKey(event)">
+    <div id="cmdList" class="cmd-list"></div>
+    <div class="cmd-foot"><span><kbd>↑↓</kbd> navigate</span><span><kbd>↵</kbd> select</span><span><kbd>esc</kbd> close</span></div>
+  </div>
+</div>
+
+<div id="modalBackdrop" class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div id="modal" class="modal"></div></div>
+<div id="toasts" class="toast-stack"></div>
+
+<script src="js/api.js" defer></script>
+<script src="js/app.js" defer></script>
+</body>
+</html>
